@@ -1,0 +1,35 @@
+version: "3.3"
+services:
+   ascent-amqp:
+    image: ascent/rabbitmq:${RELEASE_VERSION:-latest}
+    ports:
+    - 8764:15672
+    networks:
+      ascentnet:
+        aliases:
+          - rabbit
+    environment:
+    - VAULT_ADDR=${VAULT_ADDR}
+    - VAULT_TOKEN=${PLATFORM_VAULT_TOKEN}
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async-connect: "true"
+        fluentd-max-retries: "10"
+        fluentd-retry-wait: "30s"
+    deploy:
+      mode: replicated
+      replicas: ${RABBIT_MQ_REPLICAS:-1}
+      placement:
+        constraints:
+        - node.role == worker
+
+   consul:
+    image: consul:1.0.2
+    networks:
+    - ascentnet
+
+networks:
+  ascentnet:
+    driver: overlay
+
