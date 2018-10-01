@@ -9,6 +9,10 @@ dockerPipeline {
     stackName = "messaging"
     serviceName = "ascent-amqp"
 
+    vaultTokens = [
+        "VAULT_TOKEN": "ascent-platform"
+    ]
+
     //Default Deployment Configuration Values
     //composeFiles = ["docker-compose.yml"]
 }
