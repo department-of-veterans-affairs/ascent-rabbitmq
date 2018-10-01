@@ -3,22 +3,11 @@ services:
   ascent-amqp:
     build:
       context: .
-    environment:
-      - VAULT_TOKEN=vaultroot
-      - VAULT_ADDR=http://vault:8200
-    ports:
-      - "5672:5672"
     depends_on:
       - consul
       - vault
     logging:
       driver: json-file
-  
-  consul:
-    ports:
-      - "8400:8400"
-      - "8500:8500"
-      - "8600:53"
 
   ###### Vault ##########
 
@@ -33,16 +22,11 @@ services:
       - tls_disable=1
       - GIT_ACCESS_TOKEN=$GIT_ACCESS_TOKEN
     ports:
-      - "8200:8200"
+      - 8200
     command: server -dev
-    healthcheck:
-        test: ["CMD", "curl", "-f", "http://localhost:8200/v1/sys/health"]
-        interval: 30s
-        timeout: 10s
-        retries: 5
     networks:
       - ascentnet
 
 networks:
   ascentnet:
-    driver: bridge
+    driver: ${DRIVER_TYPE:-bridge}

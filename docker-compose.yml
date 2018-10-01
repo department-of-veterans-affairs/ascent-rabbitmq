@@ -9,8 +9,8 @@ services:
         aliases:
           - rabbit
     environment:
-    - VAULT_ADDR=${VAULT_ADDR}
-    - VAULT_TOKEN=${PLATFORM_VAULT_TOKEN}
+      - VAULT_ADDR=${VAULT_ADDR:-http://vault:8200}
+      - VAULT_TOKEN=${VAULT_TOKEN:-vaultroot}
     logging:
       driver: fluentd
       options:
@@ -19,7 +19,7 @@ services:
         fluentd-retry-wait: "30s"
     deploy:
       mode: replicated
-      replicas: ${RABBIT_MQ_REPLICAS:-1}
+      replicas: ${REPLICAS:-1}
       placement:
         constraints:
         - node.role == worker
@@ -31,5 +31,6 @@ services:
 
 networks:
   ascentnet:
-    driver: overlay
+    external:
+      name: ascentnet
 
